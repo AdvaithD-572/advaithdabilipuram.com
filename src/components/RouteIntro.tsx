@@ -1,0 +1,20 @@
+import { useLayoutEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { TextPressure } from './TextPressure';
+
+gsap.registerPlugin(ScrollTrigger);
+
+export function RouteIntro({ label }: { label: string }) {
+  const root = useRef<HTMLElement>(null);
+  const title = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !root.current || !title.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(title.current, { scale: 1, opacity: 1 }, { scale: 18, opacity: 0, ease: 'power2.in', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .7 } });
+    }, root);
+    return () => ctx.revert();
+  }, [label]);
+  return <section ref={root} className="route-intro" aria-label={`${label} introduction`}><div className="route-intro__sticky" ref={title}><p>ADVAITH’S</p><TextPressure text={label} /></div><div className="scroll-cue">SCROLL TO ENTER <span /></div></section>;
+}
