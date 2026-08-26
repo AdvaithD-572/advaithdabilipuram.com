@@ -2,10 +2,11 @@ import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPressure } from './TextPressure';
+import { AsciiMatrixBackground } from './AsciiMatrixBackground';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export function RouteIntro({ label }: { label: string }) {
+export function RouteIntro({ label, portrait = false }: { label: string; portrait?: boolean }) {
   const root = useRef<HTMLElement>(null);
   const title = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
@@ -16,5 +17,5 @@ export function RouteIntro({ label }: { label: string }) {
     }, root);
     return () => ctx.revert();
   }, [label]);
-  return <section ref={root} className="route-intro" aria-label={`${label} introduction`}><div className="route-intro__sticky" ref={title}><p>ADVAITH’S</p><TextPressure text={label} /></div><div className="scroll-cue">SCROLL TO ENTER <span /></div></section>;
+  return <section ref={root} className={`route-intro ${portrait ? 'route-intro--portrait' : ''}`} aria-label={`${label} introduction`}><div className="route-intro__sticky" ref={title}>{portrait && <AsciiMatrixBackground />}<p>{label === 'ADVAITH' ? 'SOFTWARE PORTFOLIO' : "ADVAITH'S"}</p><TextPressure text={label} /></div></section>;
 }

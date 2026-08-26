@@ -19,15 +19,15 @@ export const projects: Project[] = [
 
 export const products = [
   { name: 'ClientFlow Global', description: 'A buyer-owned client portal source kit for collecting files, delivering versioned work, gathering contextual feedback and recording approvals.', href: 'https://forgeproject.gumroad.com/l/clientflow' },
-  { name: 'Vantir', description: 'A self-hosted multi-channel ecommerce operating system with unified operations, analytics and deployment-ready source code.', href: 'https://forgeproject.gumroad.com/l/vantiros' },
+  { name: 'Vantiros', description: 'A self-hosted multi-channel ecommerce operating system with unified operations, analytics and deployment-ready source code.', href: 'https://forgeproject.gumroad.com/l/vantiros' },
   { name: 'AuditFlow', description: 'A self-hosted website-audit kit that turns observable page signals into editable, client-ready strategic briefs.', href: 'https://forgeproject.gumroad.com/l/vjabxi' },
 ];
 
 export const skills = [
-  ['Languages', 'Python · Java · C · SQL · JavaScript · HTML/CSS'],
-  ['Application', 'React · Node.js · FastAPI · REST APIs · Flutter'],
-  ['Data & AI', 'PostgreSQL · Redis · Data analytics · LLMs · Prompt engineering'],
-  ['Delivery', 'Git · Docker · Docker Compose · Google Cloud · Testing · Debugging'],
+  ['Languages', 'Python, Java, C, SQL, JavaScript, HTML and CSS'],
+  ['Application', 'React, Node.js, FastAPI, REST APIs, Flutter'],
+  ['Data and AI', 'PostgreSQL, Redis, data analytics, LLMs, prompt engineering'],
+  ['Delivery', 'Git, Docker, Google Cloud, testing, debugging'],
 ];
 
 export const links = {

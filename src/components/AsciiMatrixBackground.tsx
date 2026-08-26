@@ -1,132 +1,139 @@
 import { useEffect, useRef } from 'react';
 import { luminance, mapLuminanceToGlyph } from '../lib/ascii';
+import { planBackground, shouldAnimateBackground } from '../lib/background-plan';
 
-const CHARS = ' 01アイウエオカキクケコサシスセソ';
-type RenderMode = 'characters' | 'dither' | 'mosaic' | 'pixel' | 'dots' | 'cross' | 'diamond' | 'voxel' | 'lego' | 'mixed' | 'lines' | 'diagonal' | 'braille' | 'disco' | 'hexdump' | 'matrix' | 'rings' | 'hearts' | 'stars' | 'hexagons' | 'triangles' | 'bubbles' | 'hatch' | 'contour' | 'halfblocks';
+const SOURCE_IMAGE = '/assets/advaith-ascii-source.webp';
+const MATRIX_GLYPHS = ' 01アイウエオカキクケコサシスセソ';
+const FRAME_INTERVAL = 1000 / 12;
 
-function drawPrimitive(ctx: CanvasRenderingContext2D, mode: RenderMode, x: number, y: number, size: number, lum: number, glyph: string) {
-  const n = lum / 255;
-  const radius = Math.max(.5, n * size * .45);
-  ctx.beginPath();
-  switch (mode) {
-    case 'characters': case 'matrix': ctx.fillText(glyph, x, y); return;
-    case 'hexdump': ctx.fillText(Math.round(n * 15).toString(16).toUpperCase(), x, y); return;
-    case 'braille': ctx.fillText(String.fromCharCode(0x2800 + Math.round(n * 255)), x, y); return;
-    case 'halfblocks': ctx.fillText(n > .5 ? '▀' : '▄', x, y); return;
-    case 'dots': case 'bubbles': case 'disco': ctx.arc(x + size / 2, y + size / 2, radius, 0, Math.PI * 2); break;
-    case 'rings': ctx.arc(x + size / 2, y + size / 2, radius, 0, Math.PI * 2); ctx.stroke(); return;
-    case 'cross': ctx.moveTo(x, y + size / 2); ctx.lineTo(x + size, y + size / 2); ctx.moveTo(x + size / 2, y); ctx.lineTo(x + size / 2, y + size); ctx.stroke(); return;
-    case 'diamond': ctx.moveTo(x + size / 2, y); ctx.lineTo(x + size, y + size / 2); ctx.lineTo(x + size / 2, y + size); ctx.lineTo(x, y + size / 2); ctx.closePath(); break;
-    case 'triangles': ctx.moveTo(x + size / 2, y); ctx.lineTo(x + size, y + size); ctx.lineTo(x, y + size); ctx.closePath(); break;
-    case 'hexagons': case 'voxel': for (let i = 0; i < 6; i++) { const a = Math.PI / 3 * i; const px = x + size / 2 + Math.cos(a) * radius; const py = y + size / 2 + Math.sin(a) * radius; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); break;
-    case 'lines': case 'diagonal': case 'hatch': ctx.moveTo(x, y + size); ctx.lineTo(x + size, y); if (mode === 'hatch') { ctx.moveTo(x, y); ctx.lineTo(x + size, y + size); } ctx.stroke(); return;
-    case 'contour': ctx.arc(x + size / 2, y + size / 2, radius, 0, Math.PI * 1.5); ctx.stroke(); return;
-    case 'hearts': ctx.moveTo(x + size / 2, y + size); ctx.bezierCurveTo(x - size * .15, y + size * .55, x + size * .08, y, x + size / 2, y + size * .3); ctx.bezierCurveTo(x + size * .92, y, x + size * 1.15, y + size * .55, x + size / 2, y + size); break;
-    case 'stars': for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5; const r = i % 2 ? radius * .45 : radius; const px = x + size / 2 + Math.cos(a) * r; const py = y + size / 2 + Math.sin(a) * r; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); break;
-    case 'mixed': if ((x / size + y / size) % 2 < 1) ctx.arc(x + size / 2, y + size / 2, radius, 0, Math.PI * 2); else ctx.rect(x + (size - radius * 2) / 2, y + (size - radius * 2) / 2, radius * 2, radius * 2); break;
-    default: ctx.rect(x, y, size, size); break;
-  }
-  ctx.fill();
-}
+type Cell = { x: number; y: number; luminance: number; seed: number };
 
 export function AsciiMatrixBackground() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    const root = rootRef.current;
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d', { alpha: false });
-    if (!ctx) return;
-    const source = document.createElement('canvas');
-    const sourceCtx = source.getContext('2d', { willReadFrequently: true });
-    if (!sourceCtx) return;
+    const context = canvas?.getContext('2d');
+    if (!root || !canvas || !context) return;
+
     const image = new Image();
-    image.src = '/assets/sports-intelligence-frame.jpg';
+    image.decoding = 'async';
+    image.src = SOURCE_IMAGE;
+    const sampleCanvas = document.createElement('canvas');
+    const sampleContext = sampleCanvas.getContext('2d', { willReadFrequently: true });
+    if (!sampleContext) return;
+
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let cells: Cell[] = [];
     let frame = 0;
-    let visible = true;
-    let started = false;
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
-    const state = { width: 0, height: 0, cells: [] as { x: number; y: number; lum: number; r: number; g: number; b: number; seed: number }[] };
+    let lastFrame = 0;
+    let inView = true;
+    let documentVisible = !document.hidden;
+    let cssWidth = 1;
+    let cssHeight = 1;
+
+    const draw = (time: number) => {
+      frame = 0;
+      if (time - lastFrame < FRAME_INTERVAL && lastFrame > 0) {
+        frame = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrame = time;
+      context.clearRect(0, 0, cssWidth, cssHeight);
+      context.save();
+      context.font = `${Math.max(8, Math.min(13, cssWidth / 92))}px "IBM Plex Mono", monospace`;
+      context.textBaseline = 'middle';
+      context.textAlign = 'center';
+      context.shadowColor = 'rgba(174, 255, 70, .28)';
+      context.shadowBlur = 4;
+
+      const waveTime = time * 0.0014;
+      for (const cell of cells) {
+        const wave = Math.sin(cell.x * 0.022 + waveTime + cell.seed * 4) * 0.5 + 0.5;
+        const lit = Math.min(255, cell.luminance * (0.82 + wave * 0.24));
+        const glyph = mapLuminanceToGlyph(lit, MATRIX_GLYPHS);
+        const alpha = Math.min(0.92, 0.22 + lit / 330);
+        context.fillStyle = wave > 0.72
+          ? `rgba(255,255,255,${alpha})`
+          : `rgba(174,255,70,${alpha})`;
+        context.fillText(glyph, cell.x, cell.y);
+      }
+      context.restore();
+
+      if (shouldAnimateBackground({ reducedMotion, documentVisible, inView })) {
+        frame = requestAnimationFrame(draw);
+      }
+    };
 
     const prepare = () => {
-      const width = innerWidth;
-      const height = innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      source.width = width;
-      source.height = height;
-      const scale = Math.max(width / image.width, height / image.height);
-      const sw = image.width * scale;
-      const sh = image.height * scale;
-      sourceCtx.filter = 'brightness(112%) contrast(115%) saturate(100%)';
-      sourceCtx.drawImage(image, (width - sw) / 2, (height - sh) / 2, sw, sh);
-      const pixels = sourceCtx.getImageData(0, 0, width, height).data;
-      const cell = width < 600 ? 9 : 11;
-      const cells = [];
-      for (let y = 0; y < height; y += cell) {
-        for (let x = 0; x < width; x += cell) {
-          let r = 0, g = 0, b = 0, samples = 0;
-          for (let sy = y; sy < Math.min(y + cell, height); sy += 2) for (let sx = x; sx < Math.min(x + cell, width); sx += 2) { const i = (sy * width + sx) * 4; r += pixels[i]; g += pixels[i + 1]; b += pixels[i + 2]; samples++; }
-          r /= samples; g /= samples; b /= samples;
-          cells.push({ x, y, lum: luminance(r, g, b), r, g, b, seed: ((x * 13 + y * 7) % 97) / 97 });
+      if (!image.complete || !image.naturalWidth) return;
+      const rect = root.getBoundingClientRect();
+      const plan = planBackground({ width: rect.width, height: rect.height, dpr: devicePixelRatio || 1 });
+      cssWidth = plan.cssWidth;
+      cssHeight = plan.cssHeight;
+      canvas.width = plan.backingWidth;
+      canvas.height = plan.backingHeight;
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
+      context.setTransform(plan.backingWidth / cssWidth, 0, 0, plan.backingHeight / cssHeight, 0, 0);
+
+      sampleCanvas.width = plan.columns;
+      sampleCanvas.height = plan.rows;
+      sampleContext.clearRect(0, 0, plan.columns, plan.rows);
+      const scale = Math.max(plan.columns / image.naturalWidth, plan.rows / image.naturalHeight);
+      const width = image.naturalWidth * scale;
+      const height = image.naturalHeight * scale;
+      sampleContext.drawImage(image, (plan.columns - width) / 2, (plan.rows - height) / 2, width, height);
+      const pixels = sampleContext.getImageData(0, 0, plan.columns, plan.rows).data;
+      const nextCells: Cell[] = [];
+      for (let row = 0; row < plan.rows; row += 1) {
+        for (let column = 0; column < plan.columns; column += 1) {
+          const index = (row * plan.columns + column) * 4;
+          const value = luminance(pixels[index], pixels[index + 1], pixels[index + 2]);
+          if (value < 24) continue;
+          nextCells.push({
+            x: (column + 0.5) * (cssWidth / plan.columns),
+            y: (row + 0.5) * (cssHeight / plan.rows),
+            luminance: value,
+            seed: ((column * 17 + row * 11) % 101) / 101,
+          });
         }
       }
-      state.width = width;
-      state.height = height;
-      state.cells = cells;
+      cells = nextCells;
+      cancelAnimationFrame(frame);
       draw(performance.now());
     };
 
-    const draw = (time: number) => {
-      const { width, height, cells } = state;
-      if (!width || !height) return;
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#050607';
-      ctx.fillRect(0, 0, width, height);
-      ctx.globalAlpha = 0.4;
-      ctx.drawImage(source, 0, 0);
-      ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.font = `${width < 600 ? 9 : 11}px "Roboto Mono", monospace`;
-      ctx.textBaseline = 'top';
-      ctx.shadowColor = 'rgba(60,166,255,.42)';
-      ctx.shadowBlur = 6.25;
-      const t = time * 0.001;
-      for (const cell of cells) {
-        const wave = Math.sin(cell.x * 0.018 + t * 2.4 + cell.seed * 8) * 0.5 + 0.5;
-        const rain = ((cell.y / Math.max(height, 1) + t * 0.12 + cell.seed) % 1);
-        const animatedLum = Math.min(255, cell.lum * (0.72 + wave * 0.42) + (rain > 0.89 ? 80 : 0));
-        const glyph = mapLuminanceToGlyph(animatedLum, CHARS);
-        const alpha = 0.1 + animatedLum / 255 * 0.48;
-        ctx.fillStyle = `rgba(${Math.round(40 + cell.r * .08)},${Math.round(158 + cell.g * .2)},${Math.round(165 + cell.b * .28)},${alpha})`;
-        drawPrimitive(ctx, 'matrix', cell.x, cell.y, width < 600 ? 9 : 11, animatedLum, glyph);
-      }
-      ctx.shadowBlur = 0;
-      ctx.globalCompositeOperation = 'source-over';
-      const vignette = ctx.createRadialGradient(width / 2, height / 2, Math.min(width, height) * .1, width / 2, height / 2, Math.max(width, height) * .68);
-      vignette.addColorStop(0, 'rgba(0,0,0,0)');
-      vignette.addColorStop(1, 'rgba(0,0,0,.72)');
-      ctx.fillStyle = vignette;
-      ctx.fillRect(0, 0, width, height);
-      if (!reduce && visible) frame = requestAnimationFrame(draw);
+    const resizeObserver = new ResizeObserver(prepare);
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      cancelAnimationFrame(frame);
+      if (shouldAnimateBackground({ reducedMotion, documentVisible, inView })) frame = requestAnimationFrame(draw);
+    }, { threshold: 0.05 });
+    const onVisibility = () => {
+      documentVisible = !document.hidden;
+      cancelAnimationFrame(frame);
+      if (shouldAnimateBackground({ reducedMotion, documentVisible, inView })) frame = requestAnimationFrame(draw);
     };
 
-    const onVisibility = () => {
-      visible = !document.hidden;
-      cancelAnimationFrame(frame);
-      if (visible && started && !reduce) frame = requestAnimationFrame(draw);
-    };
-    const resize = () => image.complete && prepare();
-    image.onload = () => { started = true; prepare(); };
-    image.onerror = () => { ctx.fillStyle = '#050607'; ctx.fillRect(0, 0, innerWidth, innerHeight); };
-    addEventListener('resize', resize);
+    image.addEventListener('load', prepare, { once: true });
+    resizeObserver.observe(root);
+    intersectionObserver.observe(root);
     document.addEventListener('visibilitychange', onVisibility);
-    return () => { cancelAnimationFrame(frame); removeEventListener('resize', resize); document.removeEventListener('visibilitychange', onVisibility); };
+
+    return () => {
+      cancelAnimationFrame(frame);
+      image.removeEventListener('load', prepare);
+      resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
-  return <canvas ref={canvasRef} className="ascii-bg" aria-hidden="true" />;
+  return <div ref={rootRef} className="ascii-portrait" aria-hidden="true">
+    <img src={SOURCE_IMAGE} alt="" className="ascii-portrait__fallback" />
+    <canvas ref={canvasRef} />
+  </div>;
 }
