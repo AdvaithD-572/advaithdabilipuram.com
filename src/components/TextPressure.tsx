@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { pressureAttributes, RESTING_VARIATION } from '../lib/pressure';
 
 type TextPressureProps = {
   text?: string;
@@ -15,9 +16,6 @@ type TextPressureProps = {
   className?: string;
   minFontSize?: number;
 };
-
-const clampAttribute = (distance: number, maxDistance: number, minimum: number, maximum: number) =>
-  Math.max(minimum, maximum - (maximum * distance) / Math.max(maxDistance, 1));
 
 export function TextPressure({
   text = 'ADVAITH',
@@ -49,24 +47,25 @@ export function TextPressure({
     setFontSize(Math.max(rect.width / Math.max(characters.length / 1.9, 1), minFontSize));
   }, [characters.length, minFontSize]);
 
-  const applyPressure = useCallback((clientX: number) => {
+  const applyPressure = useCallback((clientX: number, clientY: number) => {
     const title = titleRef.current;
     if (!title) return;
     const rect = title.getBoundingClientRect();
-    const maxDistance = rect.width / 2;
-    spansRef.current.forEach((span, index) => {
+    const radius = Math.max(rect.width * 0.22, rect.height * 1.75);
+    spansRef.current.forEach((span) => {
       if (!span) return;
-      const center = rect.left + ((index + 0.5) / characters.length) * rect.width;
-      const distance = Math.abs(clientX - center);
+      const glyph = span.getBoundingClientRect();
+      const distance = Math.hypot(clientX - (glyph.left + glyph.width / 2), clientY - (glyph.top + glyph.height / 2));
+      const pressure = pressureAttributes(distance, radius);
       const settings = [
-        `'wght' ${weight ? Math.round(clampAttribute(distance, maxDistance, 160, 900)) : 500}`,
-        `'wdth' ${width ? Math.round(clampAttribute(distance, maxDistance, 45, 151)) : 100}`,
-        `'ital' ${italic ? Math.min(1, clampAttribute(distance, maxDistance, 0, 1)).toFixed(2) : 0}`,
+        `'wght' ${weight ? pressure.weight : 400}`,
+        `'wdth' ${width ? pressure.width : 100}`,
+        `'ital' ${italic ? pressure.italic : 0}`,
       ].join(', ');
       span.style.fontVariationSettings = settings;
-      if (alpha) span.style.opacity = String(Math.max(0.25, clampAttribute(distance, maxDistance, 0.25, 1)));
+      if (alpha) span.style.opacity = String(pressure.alpha);
     });
-  }, [alpha, characters.length, italic, weight, width]);
+  }, [alpha, italic, weight, width]);
 
   useEffect(() => {
     measure();
@@ -79,13 +78,13 @@ export function TextPressure({
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) {
       spansRef.current.forEach(span => {
-        if (span) span.style.fontVariationSettings = "'wght' 560, 'wdth' 100, 'ital' 0";
+        if (span) span.style.fontVariationSettings = RESTING_VARIATION;
       });
       return;
     }
     const pointerMove = (event: PointerEvent) => {
       cancelAnimationFrame(frameRef.current);
-      frameRef.current = requestAnimationFrame(() => applyPressure(event.clientX));
+      frameRef.current = requestAnimationFrame(() => applyPressure(event.clientX, event.clientY));
     };
     addEventListener('pointermove', pointerMove, { passive: true });
     return () => {
@@ -111,6 +110,7 @@ export function TextPressure({
         key={`${character}-${index}`}
         ref={element => { spansRef.current[index] = element; }}
         aria-hidden="true"
+        style={{ fontVariationSettings: RESTING_VARIATION }}
       >{character === ' ' ? '\u00a0' : character}</span>)}
     </h1>
   </div>;

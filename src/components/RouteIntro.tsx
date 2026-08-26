@@ -11,11 +11,16 @@ export function RouteIntro({ label, portrait = false }: { label: string; portrai
   const title = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || !root.current || !title.current) return;
+    if (!root.current || !title.current) return;
+    gsap.set(title.current, { clearProps: 'transform,opacity' });
+    if (reduce) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(title.current, { scale: 1, opacity: 1 }, { scale: 18, opacity: 0, ease: 'power2.in', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .7 } });
+      gsap.fromTo(title.current, { scale: 1, opacity: 1 }, { scale: 18, opacity: 0, ease: 'power2.in', immediateRender: true, scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .7, invalidateOnRefresh: true } });
     }, root);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      if (title.current) gsap.set(title.current, { clearProps: 'transform,opacity' });
+    };
   }, [label]);
   return <section ref={root} className={`route-intro ${portrait ? 'route-intro--portrait' : ''}`} aria-label={`${label} introduction`}><div className="route-intro__sticky" ref={title}>{portrait && <AsciiMatrixBackground />}<p>{label === 'ADVAITH' ? 'SOFTWARE PORTFOLIO' : "ADVAITH'S"}</p><TextPressure text={label} /></div></section>;
 }

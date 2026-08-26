@@ -5,11 +5,38 @@ import { OptionWheel } from './components/OptionWheel';
 import { RouteIntro } from './components/RouteIntro';
 import { links, products, projects, skills, type Project } from './data';
 import { resolvePortfolioRoute, titleForRoute } from './lib/routes';
+import { resetPageScroll } from './lib/navigation';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const external = { target: '_blank', rel: 'noreferrer' } as const;
-function useHash() { const read = () => location.hash || '#/'; const [hash, setHash] = useState(read); useEffect(() => { const change = () => { setHash(read()); scrollTo({ top: 0 }); }; addEventListener('hashchange', change); return () => removeEventListener('hashchange', change); }, []); return hash; }
+function useHash() {
+  const read = () => location.hash || '#/';
+  const [hash, setHash] = useState(read);
+  useEffect(() => {
+    history.scrollRestoration = 'manual';
+    const change = () => {
+      resetPageScroll();
+      setHash(read());
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        resetPageScroll();
+        ScrollTrigger.refresh(true);
+        dispatchEvent(new Event('portfolio:scroll-reset'));
+      }));
+    };
+    addEventListener('hashchange', change);
+    resetPageScroll();
+    return () => removeEventListener('hashchange', change);
+  }, []);
+  return hash;
+}
 function Heading({ index, children }: { index: string; children: string }) { return <header className="section-heading"><span>{index}</span><h2>{children}</h2></header>; }
-function Footer() { return <footer><b>ADVAITH DABILIPURAM</b><span>FULL-STACK, AI, MOBILE</span><a href="#/">TOP ↑</a></footer>; }
+function Footer() {
+  const toTop = () => {
+    resetPageScroll(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+    dispatchEvent(new Event('portfolio:scroll-reset'));
+  };
+  return <footer><b>ADVAITH DABILIPURAM</b><span>FULL-STACK, AI, MOBILE</span><button type="button" onClick={toTop}>TOP ↑</button></footer>;
+}
 
 function Home() { return <><RouteIntro label="ADVAITH" portrait /><main id="main" className="page-content">
   <section className="home-statement"><span className="eyebrow">SOFTWARE ENGINEER IN PROGRESS</span><h1>Building useful systems with clear thinking.</h1><div><p>Computer Science undergraduate focused on full-stack products, applied AI and mobile experiences.</p><nav className="actions"><a href="#/projects">SEE THE WORK ↗</a><a href={links.resume} download>RESUME ↓</a></nav></div></section>
@@ -32,4 +59,11 @@ function ProjectDetail({ project }: { project: Project }) { return <><RouteIntro
 function Contact() { return <><RouteIntro label="CONTACT" /><main id="main" className="page-content contact-page"><section><span className="eyebrow">OPEN TO SOFTWARE ENGINEERING AND FREELANCE</span><h1>Have a worthwhile problem?</h1><a className="big-email" href={links.email}>dabilipuramadvaith@gmail.com ↗</a><nav className="contact-links"><a href={links.github} {...external}>GITHUB</a><a href={links.linkedin} {...external}>LINKEDIN</a><a href={links.codechef} {...external}>CODECHEF</a><a href={links.leetcode} {...external}>LEETCODE</a></nav></section><Footer /></main></>; }
 function NotFound() { return <main id="main" className="not-found"><span>404</span><h1>That page stepped out.</h1><a href="#/">RETURN HOME ↗</a></main>; }
 
-export function Portfolio() { const route = resolvePortfolioRoute(useHash()); const project = route.kind === 'project' ? projects.find(({ slug }) => slug === route.projectSlug) : undefined; useEffect(() => { document.title = titleForRoute(route, project?.name); }, [route, project]); return <><a className="skip-link" href="#main" onClick={(event) => { event.preventDefault(); const main = document.getElementById('main'); if (main) { main.tabIndex = -1; main.scrollIntoView(); main.focus({ preventScroll: true }); } }}>Skip to content</a><div className="noise" aria-hidden="true" /><CardNav /><ScrollThread /><Crosshair />{route.kind === 'home' ? <Home /> : route.kind === 'about' ? <About /> : route.kind === 'projects' ? <ProjectExplorer /> : route.kind === 'project' && project ? <ProjectDetail project={project} /> : route.kind === 'contact' ? <Contact /> : <NotFound />}</>; }
+export function Portfolio() {
+  const route = resolvePortfolioRoute(useHash());
+  const project = route.kind === 'project' ? projects.find(({ slug }) => slug === route.projectSlug) : undefined;
+  const routeKey = route.kind === 'project' ? `project-${route.projectSlug}` : route.kind;
+  useEffect(() => { document.title = titleForRoute(route, project?.name); }, [route, project]);
+  const page = route.kind === 'home' ? <Home /> : route.kind === 'about' ? <About /> : route.kind === 'projects' ? <ProjectExplorer /> : route.kind === 'project' && project ? <ProjectDetail project={project} /> : route.kind === 'contact' ? <Contact /> : <NotFound />;
+  return <><a className="skip-link" href="#main" onClick={(event) => { event.preventDefault(); const main = document.getElementById('main'); if (main) { main.tabIndex = -1; main.scrollIntoView(); main.focus({ preventScroll: true }); } }}>Skip to content</a><div className="noise" aria-hidden="true" /><CardNav /><ScrollThread /><Crosshair /><div className="route-shell" key={routeKey}>{page}</div></>;
+}
