@@ -52,10 +52,13 @@ export function TextPressure({
     if (!title) return;
     const rect = title.getBoundingClientRect();
     const radius = Math.max(rect.width * 0.22, rect.height * 1.75);
-    spansRef.current.forEach((span) => {
-      if (!span) return;
+    const glyphs = spansRef.current.flatMap((span) => {
+      if (!span) return [];
       const glyph = span.getBoundingClientRect();
-      const distance = Math.hypot(clientX - (glyph.left + glyph.width / 2), clientY - (glyph.top + glyph.height / 2));
+      return [{ span, centerX: glyph.left + glyph.width / 2, centerY: glyph.top + glyph.height / 2 }];
+    });
+    glyphs.forEach(({ span, centerX, centerY }) => {
+      const distance = Math.hypot(clientX - centerX, clientY - centerY);
       const pressure = pressureAttributes(distance, radius);
       const settings = [
         `'wght' ${weight ? pressure.weight : 400}`,

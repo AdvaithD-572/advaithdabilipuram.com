@@ -13,6 +13,7 @@ function useHash() {
   const read = () => location.hash || '#/';
   const [hash, setHash] = useState(read);
   useEffect(() => {
+    const previousRestoration = history.scrollRestoration;
     history.scrollRestoration = 'manual';
     const change = () => {
       resetPageScroll();
@@ -25,14 +26,17 @@ function useHash() {
     };
     addEventListener('hashchange', change);
     resetPageScroll();
-    return () => removeEventListener('hashchange', change);
+    return () => {
+      removeEventListener('hashchange', change);
+      history.scrollRestoration = previousRestoration;
+    };
   }, []);
   return hash;
 }
 function Heading({ index, children }: { index: string; children: string }) { return <header className="section-heading"><span>{index}</span><h2>{children}</h2></header>; }
 function Footer() {
   const toTop = () => {
-    resetPageScroll(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+    resetPageScroll();
     dispatchEvent(new Event('portfolio:scroll-reset'));
   };
   return <footer><b>ADVAITH DABILIPURAM</b><span>FULL-STACK, AI, MOBILE</span><button type="button" onClick={toTop}>TOP ↑</button></footer>;

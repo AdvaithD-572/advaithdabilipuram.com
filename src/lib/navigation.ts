@@ -4,9 +4,17 @@ export function resetPageScroll(behavior: ScrollBehavior = 'auto') {
   if (typeof window === 'undefined') return;
   window.history.scrollRestoration = 'manual';
   ScrollTrigger.clearScrollMemory('manual');
-  window.scrollTo({ top: 0, left: 0, behavior });
-  document.documentElement.scrollTop = 0;
+  const root = document.documentElement;
+  if (behavior === 'smooth') {
+    window.scrollTo({ top: 0, left: 0, behavior });
+    return;
+  }
+  const previousBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  root.scrollTop = 0;
   document.body.scrollTop = 0;
+  requestAnimationFrame(() => { root.style.scrollBehavior = previousBehavior; });
 }
 
 export function pageScrollProgress() {
