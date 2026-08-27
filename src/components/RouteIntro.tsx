@@ -22,5 +22,5 @@ export function RouteIntro({ label, portrait = false }: { label: string; portrai
       if (title.current) gsap.set(title.current, { clearProps: 'transform,opacity' });
     };
   }, [label]);
-  return <section ref={root} className={`route-intro ${portrait ? 'route-intro--portrait' : ''}`} aria-label={`${label} introduction`}><div className="route-intro__sticky" ref={title}>{portrait && <AsciiMatrixBackground />}<p>{label === 'ADVAITH' ? 'SOFTWARE PORTFOLIO' : "ADVAITH'S"}</p><TextPressure text={label} /></div></section>;
+  return <section ref={root} className={`route-intro ${portrait ? 'route-intro--portrait' : ''}`} aria-label={`${label} introduction`}><div className="route-intro__sticky" ref={title}>{portrait && <AsciiMatrixBackground />}<p className="route-intro__eyebrow">{label === 'ADVAITH' ? 'SOFTWARE PORTFOLIO' : "ADVAITH'S"}</p><TextPressure text={label} /></div></section>;
 }
