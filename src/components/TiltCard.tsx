@@ -50,7 +50,7 @@ export function TiltCard({
       <div>{title && <h3>{title}</h3>}{description && <p>{description}</p>}</div>
       {price && <span className={`tilt-card__badge ${badgeLabel ? `is-${badgeVariant}` : ''}`}>{price}{badgeLabel && <b>{badgeLabel}</b>}</span>}
     </div>}
-    {imageSrc && <img src={imageSrc} alt={imageAlt} width={960} height={536} loading="lazy" decoding="async" className="tilt-card__image" />}
+    {imageSrc && <img src={imageSrc} alt={imageAlt} width={1920} height={1020} loading="lazy" decoding="async" className="tilt-card__image" />}
     {children}
     <i className="tilt-card__light" aria-hidden="true" />
     <i className="tilt-card__circle" aria-hidden="true" />

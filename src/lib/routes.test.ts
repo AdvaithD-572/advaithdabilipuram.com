@@ -4,9 +4,12 @@ import { resolvePortfolioRoute, titleForRoute } from './routes';
 describe('portfolio routes', () => {
   it.each([
     ['#/', 'home'],
+    ['/', 'home'],
     ['#/about', 'about'],
+    ['/about', 'about'],
     ['#/skills', 'about'],
     ['#/projects', 'projects'],
+    ['/projects', 'projects'],
     ['#/contact', 'contact'],
   ])('maps %s to %s', (hash, expected) => {
     expect(resolvePortfolioRoute(hash).kind).toBe(expected);
