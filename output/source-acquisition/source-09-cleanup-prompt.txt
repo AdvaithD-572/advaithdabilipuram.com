@@ -1,0 +1,5 @@
+Tool: built-in image_gen; edit mode
+Input: source-09-typographic-world-original.png
+Output: source-09-typographic-world-clean.png
+
+Edit the supplied image only. Remove the small pale four-point sparkle watermark in the lower-right corner (center near x1049 y551 in the1128x630 original), and seamlessly reconstruct the blue-gray textured mineral floor beneath it. Preserve the entire existing scene: exact composition, landscape aspect ratio, camera, rocks at the sides, atmospheric mist, soft central warm light, burgundy reflected floor shadows, blue-gray colors, texture, and all objects. No redesign, new elements, added text, logos, watermarks, or cropping. Make the smallest possible local correction. Return a single clean background image.

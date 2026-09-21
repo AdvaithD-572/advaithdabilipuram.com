@@ -10,6 +10,12 @@ const MIME_TYPES = Object.freeze({
   '.jpg': 'image/jpeg',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.otf': 'font/otf',
   '.pdf': 'application/pdf',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
@@ -49,13 +55,33 @@ const collectFiles = async directory => {
   return files.flat();
 };
 
-const createWorkerSource = assets => `
+export const createWorkerSource = assets => `
 const ASSETS = ${JSON.stringify(assets)};
 const AVAILABLE_PATHS = new Set(Object.keys(ASSETS));
 
-const decode = encoded => {
-  const binary = atob(encoded);
-  return Uint8Array.from(binary, character => character.charCodeAt(0));
+// Decode only the requested base64 groups. Video seeks must not allocate a
+// complete decoded video buffer for each tiny byte-range request.
+const decode = (encoded, start, end) => {
+  const groupStart = Math.floor(start / 3) * 4;
+  const groupEnd = Math.ceil((end + 1) / 3) * 4;
+  const binary = atob(encoded.slice(groupStart, groupEnd));
+  const offset = start % 3;
+  const bytes = new Uint8Array(end - start + 1);
+  for (let i = 0; i < bytes.length; i += 1) bytes[i] = binary.charCodeAt(offset + i);
+  return bytes;
+};
+
+const parseRange = (value, size) => {
+  if (!value) return null;
+  const match = /^bytes=(\\d*)-(\\d*)$/.exec(value.trim());
+  // Unsupported multipart ranges and malformed fields are ignored.
+  if (!match || (!match[1] && !match[2])) return null;
+  const first = Number(match[1]);
+  const last = Number(match[2]);
+  if (!Number.isSafeInteger(first) || !Number.isSafeInteger(last)) return null;
+  if (!match[1]) return last > 0 && size > 0 ? [Math.max(0, size - last), size - 1] : false;
+  if (first >= size || (match[2] && last < first)) return false;
+  return [first, match[2] ? Math.min(last, size - 1) : size - 1];
 };
 
 const resolvePath = pathname => {
@@ -86,17 +112,30 @@ export default {
     const asset = pathname ? ASSETS[pathname] : null;
     if (!asset) return new Response('Not Found', { status: 404 });
 
-    const cacheControl = cacheControlFor(pathname);
-    const body = request.method === 'HEAD' ? null : decode(asset.body);
-
-    return new Response(body, {
-      status: 200,
-      headers: {
-        'Cache-Control': cacheControl,
+    const headers = {
+        'Cache-Control': cacheControlFor(pathname),
         'Content-Type': asset.contentType,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': String(asset.size),
         'X-Content-Type-Options': 'nosniff',
-      },
-    });
+    };
+    // Range applies to GET. Without validators, If-Range must send the full file.
+    const range = request.method === 'GET' && !request.headers.has('If-Range')
+      ? parseRange(request.headers.get('Range'), asset.size) : null;
+    if (range === false) {
+      return new Response(null, { status: 416, headers: {
+        ...headers, 'Content-Range': 'bytes */' + asset.size, 'Content-Length': '0',
+      } });
+    }
+    const [start, end] = range || [0, asset.size - 1];
+    const responseHeaders = range ? {
+      ...headers,
+      'Content-Range': 'bytes ' + start + '-' + end + '/' + asset.size,
+      'Content-Length': String(end - start + 1),
+    } : headers;
+    const body = request.method === 'HEAD' ? null
+      : asset.size === 0 ? new Uint8Array() : decode(asset.body, start, end);
+    return new Response(body, { status: range ? 206 : 200, headers: responseHeaders });
   },
 };
 `;
@@ -115,6 +154,7 @@ const buildWorker = async () => {
     const body = await readFile(file);
     assets[pathname] = {
       body: body.toString('base64'),
+      size: body.byteLength,
       contentType: contentTypeFor(pathname),
     };
   }

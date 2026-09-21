@@ -57,6 +57,13 @@ export function CardNav() {
   }, [open]);
 
   const close = () => setOpen(false);
+  const returnHome = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    close();
+    if (location.pathname !== '/' || location.hash) return;
+    event.preventDefault();
+    resetPageScroll();
+    dispatchEvent(new Event('portfolio:scroll-reset'));
+  };
   const internalNavigate = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     close();
     if (!href.startsWith('/') || href.startsWith('/assets/')) return;
@@ -67,7 +74,9 @@ export function CardNav() {
     }
   };
 
-  return <header className={`card-nav ${open ? 'is-open' : ''}`}>
+  return <>
+    <a className="home-mark" href="/" aria-label="Home" onClick={returnHome}>a</a>
+    <header className={`card-nav ${open ? 'is-open' : ''}`}>
     <button ref={buttonRef} className="menu-toggle" onClick={() => setOpen(current => !current)} aria-expanded={open} aria-controls="site-menu">
       {open ? 'CLOSE' : 'MENU'} <span aria-hidden="true">{open ? '×' : '+'}</span>
     </button>
@@ -83,7 +92,8 @@ export function CardNav() {
         })}
       </section>)}
     </div>
-  </header>;
+    </header>
+  </>;
 }
 
 export function ScrollThread() {

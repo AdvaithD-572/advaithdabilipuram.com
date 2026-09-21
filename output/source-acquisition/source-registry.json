@@ -1,0 +1,185 @@
+{
+  "palette": {
+    "burgundy": "#4B1D3F",
+    "nude": "#E8D9C1",
+    "roseSmoke": "#D8A7B1",
+    "offBlack": "#1B1B1B"
+  },
+  "phase": "Source acquisition complete; application implementation not started",
+  "constraints": {
+    "oneSourceAtATime": true,
+    "allRequiredSourcesBeforeBuild": true,
+    "noPaidVideoUpgrade": true,
+    "handResolutionTradeoffAccepted": true,
+    "removeVisibleBottomWatermarksFromSuppliedImages": true,
+    "projectImages": false,
+    "projectPresentation": "User explicitly requests no images for any projects. Use typography, existing factual descriptions, technical stacks and links. Preserve horizontal physical-object motion and final project-to-doorway transition using typographic panels. Do not request screenshots or use the existing Sports Intelligence image in the redesign. Preserve existing files.",
+    "aboutArtDirection": {
+      "background": "SOURCE-11",
+      "foreground": "SOURCE-12",
+      "foregroundStructure": "One supplied collage layer containing all three subject groups; preserve composition.",
+      "blur": "Extremely low static foreground blur: start0.3CSSpx, cap0.5px, tune downward if visible. Keep background and text sharp. Do not bake blur into masters.",
+      "parallax": "Subtle pointer-position-driven translations: initial foreground maximum6\u201310CSSpx, background0\u20132CSSpx, smooth settling; clamped and recentered on pointerleave. No perpetual drift. Offscreen effects inactive; reduced motion and touch use still composition. Pointer transform additive to scroll assembly so it never overrides structural state.",
+      "stage": "Source acquisition only; no implementation yet."
+    }
+  },
+  "sources": [
+    {
+      "id": "SOURCE-01",
+      "name": "Hero background",
+      "type": "image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-01-hero-background.png",
+      "section": "Hero",
+      "status": "FINAL",
+      "notes": "2048x1152 RGB PNG. Quiet center; preserve bright-corner contrast. No visible bottom watermark."
+    },
+    {
+      "id": "SOURCE-02",
+      "name": "Left photographic hand",
+      "type": "transparent-image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-02-left-hand.png",
+      "section": "Hero",
+      "status": "FINAL",
+      "notes": "876x432 RGBA. User explicitly accepted resolution and softness; control enlargement. No visible bottom watermark."
+    },
+    {
+      "id": "SOURCE-03",
+      "name": "Right photographic hand",
+      "type": "transparent-image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-03-right-hand.png",
+      "section": "Hero",
+      "status": "FINAL",
+      "notes": "876x432 RGBA. Genuine alpha; accepted under same resolution allowance. No visible bottom watermark."
+    },
+    {
+      "id": "SOURCE-04",
+      "name": "Left ink/halftone hand",
+      "type": "transparent-image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-04-left-hand-ink.png",
+      "section": "Hero",
+      "status": "FINAL",
+      "notes": "884x432 RGBA. Minor horizontal normalization gives98.1% silhouette overlap with source02; fingertips aligned. No visible bottom watermark."
+    },
+    {
+      "id": "SOURCE-05",
+      "name": "Right ink/halftone hand",
+      "type": "transparent-image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-05-right-hand-ink.png",
+      "section": "Hero",
+      "status": "FINAL",
+      "notes": "876x432 RGBA.97% silhouette overlap with source03; fingertip about1px horizontal difference. No visible bottom watermark."
+    },
+    {
+      "id": "SOURCE-06",
+      "name": "Sky opening frame",
+      "type": "image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-06-sky-opening.png",
+      "section": "Sky",
+      "status": "FINAL",
+      "notes": "1672x941 RGB PNG. Source07 first-frame reference and reduced-motion fallback. No visible bottom watermark."
+    },
+    {
+      "id": "SOURCE-07",
+      "name": "Sky video",
+      "type": "video",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-07-sky-video-original.mp4",
+      "section": "Sky",
+      "status": "FINAL",
+      "notes": "Veo3.1 Fast8s1280x72024fps192framesH264;AAC audio;3666688bytes. Full decode and sampled seeks pass. Continuous descent, illustrated contours at4\u20135s. One keyframe at0; strip audio and encode for scrubbing later. Original retains visible Veo mark; crop-safe web framing planned, not yet performed. No paid generation needed."
+    },
+    {
+      "id": "SOURCE-08",
+      "name": "Sword design/material reference",
+      "type": "image-reference",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-08-sword-reference.png",
+      "section": "Hero/Sky boundary",
+      "status": "FINAL",
+      "notes": "776x432 RGBA;visible sword116x389px. Accepted as reference for lightweight3D geometry, not enlarged bitmap. Maintain hilt/material; broader blade follows spec. No visible bottom watermark."
+    },
+    {
+      "id": "SOURCE-09",
+      "name": "Typographic-world background",
+      "type": "image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-09-typographic-world-clean.png",
+      "section": "Typographic world",
+      "status": "FINAL",
+      "notes": "Cleaned with built-in imagegen.1677x938RGB1645621bytes. Original1128x630 preserved separately. Bottom-right sparkle removed; verified visually. Overall scene preserved, fine textures may vary. No website implementation."
+    },
+    {
+      "id": "SOURCE-10",
+      "name": "IntelliCredit project screenshot",
+      "type": "image",
+      "file": null,
+      "section": "Projects",
+      "status": "REJECTED",
+      "required": false,
+      "notes": "Screenshot acquisition cancelled by user on 2026-09-21: no images for any projects. No file received. This is a scope change, not rejection of a supplied asset."
+    },
+    {
+      "id": "SOURCE-11",
+      "name": "About scenery",
+      "type": "image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-11-about-scenery.png",
+      "section": "More About Me",
+      "status": "FINAL",
+      "notes": "User replaces portrait request with supplied artwork.1672x941RGBPNG2935389bytes. Scenery is About background. No visible bottom watermark. No invented personal likeness."
+    },
+    {
+      "id": "SOURCE-12",
+      "name": "About foreground collage",
+      "type": "transparent-image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-12-about-foreground.png",
+      "section": "More About Me",
+      "status": "FINAL",
+      "notes": "1672x941RGBA PNG3620980bytes.806663 fully transparent pixels; background gap samples alpha0 despite checkerboard RGB in invisible pixels. Three subject groups remain one combined foreground layer over source11. Preserve supplied positions and same aspect alignment. No visible bottom watermark. Fine edge antialiasing has some partial-alpha pixels; check halos against scene during final rendering."
+    },
+    {
+      "id": "SOURCE-13",
+      "name": "Contact telephone world",
+      "type": "image",
+      "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-13-contact-telephone.png",
+      "section": "Contact",
+      "status": "FINAL",
+      "notes": "1672x941RGB PNG2415786bytes,approximately16:9,no embedded ICC. Clear burgundy upper-center supports nude typography; large pale telephone and surreal room match requested direction. No visible bottom watermark. Tight portrait cover crop would trim receiver ends; preserve whole phone via responsive fit/scale/framing instead. Supplied dial remains static artwork, no dial mechanics."
+    }
+  ],
+  "watermarkAudit": {
+    "date": "2026-09-21",
+    "scope": "Accepted still images",
+    "cleaned": [
+      "SOURCE-09"
+    ],
+    "noVisibleBottomWatermarks": [
+      "SOURCE-01",
+      "SOURCE-02",
+      "SOURCE-03",
+      "SOURCE-04",
+      "SOURCE-05",
+      "SOURCE-06",
+      "SOURCE-08",
+      "SOURCE-11",
+      "SOURCE-12",
+      "SOURCE-13"
+    ],
+    "originalSource09": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-09-typographic-world-original.png",
+    "videoMark": "Still present in original SOURCE-07; planned web derivative only."
+  },
+  "sourceGate": {
+    "requiredSourcesValidated": true,
+    "unresolved": [],
+    "missingFiles": [],
+    "scopeDecisions": [
+      "No project imagery; source10 request cancelled by user.",
+      "About uses supplied scenery plus three-subject transparent collage; no portrait requested.",
+      "Credibility uses existing project/resume facts and links; no fabricated metrics or additional photo requirement.",
+      "Retain existing usable fonts; no external font-source request required.",
+      "Ribbon, typographic transformations, brick, doorway and sword geometry are implementation elements informed by accepted sources."
+    ],
+    "remainingPreparation": [
+      "Optimize images and normalize color profiles without overwriting source masters.",
+      "Prepare silent sky-video derivative with frequent keyframes and suitable framing for Veo mark; browser scrub QA remains.",
+      "Register hand-treatment layers, responsive crops and section-local animation lifecycle during implementation."
+    ],
+    "implementationStarted": false
+  }
+}
