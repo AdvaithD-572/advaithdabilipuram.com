@@ -1,0 +1,10 @@
+NEXT SOURCE — LEFT HAND GLITCH TREATMENT
+
+Use the existing transparent source-02-left-hand.png as the image-edit reference. Generate only this source first. It enters from the left and points to the right. Keep its original 876 x 432 canvas, pose, size and alignment. Export true RGBA PNG; no video is needed for this static treatment.
+
+READY-TO-PASTE PROMPT
+Edit this exact hand into a single-frame interdimensional comic-book glitch treatment, inspired by the glitching visual language of Into the Spider-Verse and Across the Spider-Verse. Preserve the exact hand anatomy, pose, fingertip location, silhouette, scale, framing and 876 x 432 canvas. Keep the base tones burgundy #4B1D3F, nude #E8D9C1, rose smoke #D8A7B1 and off-black #1B1B1B. Add sharp halftone fragments, misregistered ink contours, tiny horizontal discontinuities and brief-looking red/cyan chromatic offsets. Make the effect intense within the hand but keep edge displacement within 1-3 pixels so it overlays the original precisely. Transparent alpha background, not a drawn checkerboard or black background. No new fingers, duplicate hands, text, logo, watermark, scenery, motion blur, crop, repositioning or added shadows. Output one transparent PNG only.
+
+VALIDATION
+Same canvas/pose/tip and actual alpha transparency. The browser will show this for 140ms when the cursor enters visible hand pixels, then switch to the supplied drawn treatment. Text-covered pixels do not trigger it. Right-hand glitch source follows after left is validated.
+

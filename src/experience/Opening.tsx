@@ -8,10 +8,10 @@ import { Sword3D, type SwordHandle } from './Sword3D';
 
 gsap.registerPlugin(ScrollTrigger);
 const chapters = [
-  ['Who I am', 'A little context.', 'This space will introduce the person behind the work: where the curiosity began, what matters now, and what comes next.'],
-  ['How I think', 'A point of view.', 'A short personal perspective will live here, connecting the questions worth asking with the decisions that shape the work.'],
+  ['Who I am', 'Still studying. Already building.', 'My degree is still loading. Meanwhile, I’m exploring full-stack development, UI/UX, applied AI, and AI engineering. I love building websites that solve real problems, help people grow, and connect them with others—with room for a little creative fun. Expect a collaborative process, a sense of humour, and serious care for the quality of the finished work.'],
+  ['How I think', 'Understand first.', 'I start with a conversation. Whether you’re a startup or an individual, I want to understand what you do, what’s working, and what gets in the way. I listen to the problem or requirement, then work out a starting solution we can discuss together.'],
   ['What I build', 'Ideas into systems.', 'Full-stack applications, applied AI and mobile experiences. Explore the actual projects in the next world.'],
-  ['How I build', 'From first question.', 'This space will describe the working process, from understanding a problem to making, testing and refining a useful result.'],
+  ['How I build', 'Build. Refine. Deliver.', 'I put the first solution in front of you, hear your feedback, and clarify the details before development. Then I build, bring it back for feedback, and keep refining. You stay part of the process as we work towards a polished solution, ready to hand over.'],
 ];
 export function Opening({ reducedMotion }: { reducedMotion: boolean }) {
   const root = useRef<HTMLElement>(null);
@@ -47,10 +47,13 @@ export function Opening({ reducedMotion }: { reducedMotion: boolean }) {
     };
     video.addEventListener('seeked', seek);
     video.addEventListener('loadedmetadata', seek);
-    const drawLetters = (p: number) => namePoses(p, section.clientWidth, innerHeight, widths).forEach((pose, index) => {
-      gsap.set(letters[index], { x: pose.x, y: pose.y, rotationY: pose.rotationY, rotation: pose.rotation,
-        scaleX: pose.scale * pose.scaleX, scaleY: pose.scale, opacity: pose.opacity * fade, zIndex: pose.z >= 0 ? 5 : 3 });
-    });
+    const drawLetters = (p: number) => {
+      namePoses(p, section.clientWidth, innerHeight, widths).forEach((pose, index) => {
+        gsap.set(letters[index], { x: pose.x, y: pose.y, rotationY: pose.rotationY, rotation: pose.rotation,
+          scaleX: pose.scale * pose.scaleX, scaleY: pose.scale, opacity: pose.opacity * fade, zIndex: pose.z >= 0 ? 5 : 3 });
+      });
+      gsap.set(select('.hero-surname'), { opacity: fade * (1 - smooth(range(p, .005, .12))) });
+    };
     const poseHands = (convergence: number) => {
       const travel = (1 - smooth(convergence)) * section.clientWidth * .62;
       gsap.set(select('.hand-left'), { width: geometry.width, x: geometry.left - travel });
@@ -155,7 +158,7 @@ export function Opening({ reducedMotion }: { reducedMotion: boolean }) {
       section.addEventListener('pointerleave', leave);
       return () => { removeEventListener('experience:skip-intro', skip); section.removeEventListener('pointermove', move); section.removeEventListener('pointerleave', leave); };
     }, section);
-    return () => { alive = false; cancelAnimationFrame(frame); clearTimeout(hoverTimer); context.revert(); video.pause(); video.removeEventListener('seeked', seek); video.removeEventListener('loadedmetadata', seek); };
+    return () => { alive = false; cancelAnimationFrame(frame); clearTimeout(hoverTimer); context.revert(); video.pause(); video.removeEventListener('seeked', seek); video.removeEventListener('loadedmetadata', seek); video.removeAttribute('src'); video.load(); };
   }, [reducedMotion]);
 
   const goToIntro = () => {
@@ -168,23 +171,23 @@ export function Opening({ reducedMotion }: { reducedMotion: boolean }) {
     <div className="opening-stage">
       <div className="hero-world">
         <img className="hero-scenery" src="/assets/worlds/hero.webp" width="2048" height="1152" alt="" fetchPriority="high" />
-        <div className="hero-topline"><span>Advaith Dabilipuram</span><span>Full-stack / AI / Mobile</span></div>
         <div className="hero-hands" aria-hidden="true">{(['left', 'right'] as HandSide[]).map(side => <div className={`hand-plane hand-${side}`} key={side} data-treatment="photo"><div className="hand-pointer">
           <img className="hand-photo" src={`/assets/worlds/${side}-hand.webp`} alt="" width="876" height="432" />
           {approvedGlitchSources[side] && <img className="hand-glitch" src={approvedGlitchSources[side]} alt="" width="876" height="432" />}
           <img className="hand-ink" src={`/assets/worlds/${side}-hand-ink.webp`} alt="" width="876" height="432" />
         </div></div>)}</div>
-        <div className="hero-caption"><p>Full-stack · Applied AI · Mobile</p><a href="#intro" onClick={event => { event.preventDefault(); goToIntro(); }}>Scroll to unfold <span>↓</span></a></div>
+        <p className="hero-surname">DABILIPURAM</p>
+        <div className="hero-caption"><a href="#intro" onClick={event => { event.preventDefault(); goToIntro(); }}>Scroll to unfold <span>↓</span></a></div>
       </div>
       <h1 className="living-name" aria-label="Advaith">{flowingLetters.map((letter, index) => <span className={`flow-letter ${index >= 5 && index <= 10 ? 'extra-i' : ''}`} data-letter-index={index} key={index} aria-hidden="true">{letter}</span>)}</h1>
-      <div className="sky-world" id="intro" tabIndex={-1}>
+      <div className="sky-world" aria-hidden="true">
         <div className="sky-seam" />
         <div className="sky-camera"><img className="sky-poster" src="/assets/worlds/sky.webp" width="1672" height="941" alt="" loading="lazy" /><video className="sky-film" muted playsInline preload="none" aria-hidden="true" poster="/assets/worlds/sky.webp" />
         </div>
       </div>
       {!reducedMotion && <Sword3D ref={sword} />}
-      <div className="sky-copy">{chapters.map(([label, title, copy], index) => <article className={`sky-chapter sky-chapter-${index}`} key={label}>
-        <span className="chapter-label">{label}</span><h2>{title}</h2><p>{copy}</p>{index !== 2 && <small className="placeholder-label">Personal copy · placeholder</small>}
+      <div className="sky-copy" id="intro" tabIndex={-1}>{chapters.map(([label, title, copy], index) => <article className={`sky-chapter sky-chapter-${index}`} key={label}>
+        <span className="chapter-label">{label}</span><h2>{title}</h2><p>{copy}</p>
       </article>)}</div>
       <div className="landing-cue" aria-hidden="true">A WAY<br /><em>OF THINKING.</em></div>
     </div>

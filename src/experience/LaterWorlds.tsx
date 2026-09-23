@@ -8,9 +8,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 const EMAIL = 'dabilipuramadvaith@gmail.com';
 const SERVICE_AREAS = [
-  { name: 'Web applications', detail: 'Placeholder — define the applications, scope and deliverables offered here.', tools: 'React / FastAPI / PostgreSQL' },
-  { name: 'Applied AI', detail: 'Placeholder — define the AI workflows, integrations and outcomes offered here.', tools: 'LLMs / Retrieval / Python' },
-  { name: 'Product engineering', detail: 'Placeholder — define the product development and delivery support offered here.', tools: 'APIs / Docker / Google Cloud' },
+  { name: 'Web & full-stack applications', detail: 'Thoughtfully designed websites and web apps, with the interfaces, APIs, and data systems that make them work together.', tools: 'React / FastAPI / PostgreSQL' },
+  { name: 'Mobile applications', detail: 'Mobile experiences built around what people need to do, connected to the backend services that support them.', tools: 'Flutter / REST APIs / PostgreSQL' },
+  { name: 'Applied AI', detail: 'Conversational assistants, retrieval-based tools, and AI integrations that help solve a specific problem or simplify a workflow.', tools: 'Python / LLM APIs / Retrieval' },
+  { name: 'Product engineering', detail: 'Help taking an idea from its first requirements through UI/UX, development, feedback, and a polished working product.', tools: 'UI/UX / Full-stack development / Testing' },
 ];
 
 export function pointerOffset(position: number, origin: number, size: number, depth: number) {
@@ -78,7 +79,6 @@ function AboutWorld({ reducedMotion }: { reducedMotion: boolean }) {
     <div className="about-heading later-shell">
       <p className="later-eyebrow">More about me</p>
       <h2 id="about-title" className="about-title later-reveal">A little<br /><em>more human.</em></h2>
-      <p className="later-placeholder about-placeholder">Working headline · personal copy to follow</p>
     </div>
     <div className="about-art-entrance">
       <div ref={scene} className="about-art" role="img" aria-label="A Renaissance seascape with airborne figures, a cat standing on a shell, and a woman holding a floral cloak.">
@@ -89,8 +89,8 @@ function AboutWorld({ reducedMotion }: { reducedMotion: boolean }) {
     <div className="about-copy later-shell">
       <span className="later-eyebrow">Beyond the work</span>
       <div>
-        <p className="about-body">This is where the person<br className="about-desktop-break" /> behind the projects comes in.</p>
-        <p className="later-placeholder">Personal story placeholder · a short introduction, interests, and the things that shape the work.</p>
+        <p className="about-body">Coffee, a camera,<br />and one more rabbit hole.</p>
+        <div className="about-story"><p>I love art in pretty much every form—drawing, painting, and especially music and dance. Being good at all of them? A separate conversation. Appreciating them an unreasonable amount? Absolutely.</p><p>Photography and cinematography are where I really get hands-on. I also love riding, learning how bikes work, and keeping up with what’s happening in AI. Give me something interesting or challenging and I’ll go deep. Sometimes deep enough to forget a few less-important things. Probably less-important.</p><p>I’m a coffee person, an enthusiastic nerd, and occasionally the source of a philosophical thought that makes me go, “Wait. That was actually pretty good.” I don’t need to do everything—but when something grabs me, I want to get properly good at it.</p></div>
       </div>
       <a className="later-text-link" href={links.resume} target="_blank" rel="noreferrer">View résumé <span aria-hidden="true">↗</span></a>
     </div>
@@ -113,7 +113,7 @@ function SkillsWorld() {
 function ServicesWorld() {
   return <section id="services" tabIndex={-1} className="later-world services-world" aria-labelledby="services-title" data-world="services" data-world-label="Services">
     <div className="later-shell">
-      <div className="services-heading"><p className="later-eyebrow">Services</p><h2 id="services-title" className="services-title later-reveal">What can<br /><em>we build?</em></h2><p className="later-placeholder">Proposed service areas · scope and copy to be confirmed</p></div>
+      <div className="services-heading"><p className="later-eyebrow">Services</p><h2 id="services-title" className="services-title later-reveal">What I<br /><em>can build.</em></h2></div>
       <div className="services-list">{SERVICE_AREAS.map((service) => <article className="services-row" key={service.name}>
         <h3>{service.name}</h3><div><p>{service.detail}</p><span className="services-tools">{service.tools}</span></div><a href="#contact" aria-label={`Discuss ${service.name.toLowerCase()}`} className="services-discuss"><span aria-hidden="true">↗</span></a>
       </article>)}</div>
@@ -127,8 +127,8 @@ function CredibilityWorld() {
     <div className="later-shell">
       <div className="proof-heading"><p className="later-eyebrow">Evidence & archive</p><h2 id="proof-title" className="proof-title later-reveal">The work<br /><em>has a trail.</em></h2><a className="later-text-link" href={links.github} target="_blank" rel="noreferrer">Explore GitHub <span aria-hidden="true">↗</span></a></div>
       <div className="proof-evidence">
-        <article className="proof-education"><span className="later-eyebrow">Education</span><h3>Computer Science<br />& Engineering</h3><p>VNR VJIET · B.Tech</p><span className="proof-note">From August 2024 · résumé record</span><a className="later-text-link" href={links.resume} target="_blank" rel="noreferrer">Read résumé <span aria-hidden="true">↗</span></a></article>
-        <div className="proof-records"><h3>Learning & practice</h3><dl><div><dt>Google Cloud</dt><dd>Google Study Jams</dd></div><div><dt>Data analysis & Power BI</dt><dd>Infosys</dd></div><div><dt>AgentBlazer Champion</dt><dd>Salesforce · 2026</dd></div></dl><div className="proof-profile-links"><a href={links.codechef} target="_blank" rel="noreferrer">CodeChef ↗</a><a href={links.leetcode} target="_blank" rel="noreferrer">LeetCode ↗</a></div><p className="proof-note">Learning records from the supplied résumé.</p></div>
+        <article className="proof-education"><span className="later-eyebrow">Education</span><h3>Computer Science<br />& Engineering</h3><p>VNR VJIET · B.Tech</p><span className="proof-note">August 2024–present · CGPA 8.4/10</span><a className="later-text-link" href={links.resume} target="_blank" rel="noreferrer">Read résumé <span aria-hidden="true">↗</span></a></article>
+        <div className="proof-records"><h3>Learning & practice</h3><dl><div><dt>Google Cloud Certification</dt><dd>Google Study Jams</dd></div><div><dt>Power BI and Data Analysis</dt><dd>Infosys</dd></div><div><dt>AgentBlazer Champion</dt><dd>Salesforce · 2026</dd></div><div><dt>Data Structures and Algorithms</dt><dd>Smart Interviews · ongoing</dd></div><div><dt>100+ algorithmic problems solved</dt><dd>CodeForces / CodeChef / LeetCode</dd></div><div><dt>CodeChef Division 3</dt><dd>Rating: 1538</dd></div></dl><div className="proof-profile-links"><a href={links.codechef} target="_blank" rel="noreferrer">CodeChef ↗</a><a href={links.leetcode} target="_blank" rel="noreferrer">LeetCode ↗</a></div><p className="proof-note">Education, learning records, and programming statistics from my résumé.</p></div>
       </div>
       <div className="proof-archive"><div className="proof-archive-label"><h3>Product archive</h3><span>Source kits & software</span></div>{products.map((product) => <a className="proof-product" key={product.name} href={product.href} target="_blank" rel="noreferrer"><h4>{product.name}</h4><p>{product.description}</p><span className="proof-product-arrow" aria-hidden="true">↗</span></a>)}</div>
     </div>

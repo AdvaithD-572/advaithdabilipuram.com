@@ -24,3 +24,9 @@
 @media(max-width:600px){.sword-position{width:60vw;height:67svh;left:59%;margin-left:-30vw;top:20%;scale:1}}
 .experience-home,.experience-menu,.experience-location{mix-blend-mode:normal;color:var(--nude);text-shadow:0 1px 7px #1b1b1b66}.experience-home.chrome-light,.experience-menu.chrome-light,.experience-location.chrome-light{color:var(--burgundy);text-shadow:none}.experience-menu{font-size:12px}.experience-location{font-size:10px;font-weight:500}.sword-position{opacity:0}
 .work-stage{overflow:clip}
+.opening-stage{overflow:clip}.sky-chapter:before{background:radial-gradient(ellipse,#e8d9c1 0%,#e8d9c1f5 50%,#e8d9c1b0 70%,#e8d9c100 100%)}
+@media(min-width:1000px){.sky-chapter{left:6%;width:28%}.sky-chapter-1,.sky-chapter-3{left:auto;right:6%}}
+.sky-chapter:before{inset:-95px -85px;border-radius:50%;background:radial-gradient(ellipse closest-side,#e8d9c1 0%,#e8d9c1f0 55%,#e8d9c199 78%,#e8d9c100 100%)}
+@media(max-width:800px){.opening:not(.opening-static) .sky-chapter-1,.opening:not(.opening-static) .sky-chapter-3{top:auto;bottom:max(80px,10svh)}}
+/* The surname stays beneath the opening word and quietly recedes with scroll. */
+.hero-surname{position:absolute;top:calc(51.5svh + 15.4vw + 18px);left:0;right:0;z-index:5;text-align:center;font:500 clamp(13px,1vw,17px)/1.4 var(--mono);letter-spacing:.24em;opacity:0;pointer-events:none}.hero-caption{justify-content:flex-end}.opening-static .hero-surname{opacity:1}

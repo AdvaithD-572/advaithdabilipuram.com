@@ -7,7 +7,7 @@ export function namePoses(progress: number, viewport: number, height: number, wi
   const advances = widths.map((width, index) => (width + tracking) * factors[index]);
   const total = advances.reduce((sum, value) => sum + value, 0);
   const center = viewport * (viewport < 600 ? .59 : .5);
-  const radius = clamp(viewport * .16, 80, 240);
+  const radius = clamp(viewport * .13, 80, 200);
   const phase = range(progress, .24, .945) * Math.PI * 5;
   return flowingLetters.map((_, index) => {
     const flow = smooth(range(progress, .105 + index * .011, .27 + index * .011));

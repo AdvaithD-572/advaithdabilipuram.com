@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { projects } from '../data';
 import { destinationOffset, range, smooth } from './motion';
 
-const principles = [['ASK BETTER', 'QUESTIONS.'], ['MAKE ROOM', 'FOR IDEAS.'], ['THINK IN', 'SYSTEMS.'], ['GIVE IDEAS', 'A FORM.']];
+const principles = [['LISTEN.', 'UNDERSTAND.'], ['FIND THE', 'REAL NEED.'], ['BUILD WITH', 'FEEDBACK.'], ['REFINE.', 'DELIVER.']];
 
 export function WorkJourney({ reducedMotion }: { reducedMotion: boolean }) {
   const root = useRef<HTMLElement>(null);
@@ -52,10 +52,10 @@ export function WorkJourney({ reducedMotion }: { reducedMotion: boolean }) {
   return <section id="work-journey" ref={root} className={`work-journey ${reducedMotion ? 'work-static' : ''}`} data-world-label="Thinking / Projects">
     <div className="work-stage">
       <img className="type-environment" src="/assets/worlds/type-world.webp" width="1677" height="938" alt="" loading="lazy" />
-      <div className="type-copy"><span className="chapter-label">A way of thinking</span><p>Four principles. One foundation.</p><small className="placeholder-label">Personal philosophy · placeholder</small></div>
+      <div className="type-copy"><span className="chapter-label">A way of thinking</span></div>
       <div className="type-architecture">{principles.map(([a, b], i) => <h2 className={`principle principle-${i}`} key={a}><span>{a}</span><span>{b}</span></h2>)}</div>
       <div className="single-brick" aria-hidden="true" />
-      <header className="project-heading" id="projects" tabIndex={-1}><span>Selected work</span><span>Four systems, built.</span></header>
+      <header className="project-heading" id="projects" tabIndex={-1}><span>Selected work</span></header>
       <div className="project-track">{projects.map((project, index) => <article className={`project-object project-object-${index}`} id={project.slug} key={project.slug} tabIndex={-1} onFocus={event => {
         if (!reducedMotion && event.target instanceof HTMLAnchorElement) queueMicrotask(() => { window.scrollTo({ top: destinationOffset(project.slug), behavior: 'instant' }); ScrollTrigger.update(); });
       }}>

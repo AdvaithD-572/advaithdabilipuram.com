@@ -64,6 +64,7 @@ export function Navigation({ reducedMotion }: { reducedMotion: boolean }) {
       dispatchEvent(new Event('experience:skip-intro'));
       window.scrollTo(0, destinationOffset(id, reducedMotion));
       ScrollTrigger.update();
+      document.getElementById(id)?.focus({ preventScroll: true });
     };
     const previous = history.scrollRestoration;
     history.scrollRestoration = 'manual';

@@ -5,7 +5,7 @@
     "roseSmoke": "#D8A7B1",
     "offBlack": "#1B1B1B"
   },
-  "phase": "Source acquisition complete; application implementation not started",
+  "phase": "Animated skeleton and requested revisions implemented; matching glitch hand sources pending",
   "constraints": {
     "oneSourceAtATime": true,
     "allRequiredSourcesBeforeBuild": true,
@@ -19,9 +19,12 @@
       "foreground": "SOURCE-12",
       "foregroundStructure": "One supplied collage layer containing all three subject groups; preserve composition.",
       "blur": "Extremely low static foreground blur: start0.3CSSpx, cap0.5px, tune downward if visible. Keep background and text sharp. Do not bake blur into masters.",
-      "parallax": "Subtle pointer-position-driven translations: initial foreground maximum6\u201310CSSpx, background0\u20132CSSpx, smooth settling; clamped and recentered on pointerleave. No perpetual drift. Offscreen effects inactive; reduced motion and touch use still composition. Pointer transform additive to scroll assembly so it never overrides structural state.",
-      "stage": "Source acquisition only; no implementation yet."
-    }
+      "parallax": "Subtle pointer-position-driven translations: initial foreground maximum6–10CSSpx, background0–2CSSpx, smooth settling; clamped and recentered on pointerleave. No perpetual drift. Offscreen effects inactive; reduced motion and touch use still composition. Pointer transform additive to scroll assembly so it never overrides structural state.",
+      "stage": "Implemented: shared coordinate frame, foreground blur 0.3px, clamped foreground 8px/background 2px parallax"
+    },
+    "latestHeroDirection": "User supersedes original decode/fracture/ribbon specification: fade in after slower 2.9s hand approach; approximately 1.6x hero pointer parallax; one persistent ADVAITH glyph sequence inserts six I glyphs, travels left to right into scroll-controlled wrap around real elongated 3D sword. No separate ribbon or duplicate scattered name.",
+    "handHover": "Alpha silhouette hit testing only, excluding name glyph rectangles. Photo -> supplied glitch for 140ms -> existing ink treatment; mouseleave restores photo. Glitch slots await approved user sources; interim hover goes directly to ink.",
+    "contactRevision": "Bold email, social links and footer over the telephone image; no separate contact block below."
   },
   "sources": [
     {
@@ -85,7 +88,7 @@
       "file": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-07-sky-video-original.mp4",
       "section": "Sky",
       "status": "FINAL",
-      "notes": "Veo3.1 Fast8s1280x72024fps192framesH264;AAC audio;3666688bytes. Full decode and sampled seeks pass. Continuous descent, illustrated contours at4\u20135s. One keyframe at0; strip audio and encode for scrubbing later. Original retains visible Veo mark; crop-safe web framing planned, not yet performed. No paid generation needed."
+      "notes": "Veo3.1 Fast8s1280x72024fps192framesH264;AAC audio;3666688bytes. Full decode and sampled seeks pass. Continuous descent, illustrated contours at4–5s. One keyframe at0; strip audio and encode for scrubbing later. Original retains visible Veo mark; crop-safe web framing planned, not yet performed. No paid generation needed."
     },
     {
       "id": "SOURCE-08",
@@ -162,11 +165,13 @@
       "SOURCE-13"
     ],
     "originalSource09": "C:/Users/advai/Documents/ChatGPT/advaithdabilipuram.com/output/source-acquisition/source-09-typographic-world-original.png",
-    "videoMark": "Still present in original SOURCE-07; planned web derivative only."
+    "videoMark": "Original source preserved; web derivative public/assets/worlds/sky.mp4 crops bottom 48 pixels, strips audio and uses 0.25s keyframes."
   },
   "sourceGate": {
     "requiredSourcesValidated": true,
-    "unresolved": [],
+    "unresolved": [
+      "Glitch hand sources: first left, then right; existing drawn hover works while glitch image slots remain unassigned."
+    ],
     "missingFiles": [],
     "scopeDecisions": [
       "No project imagery; source10 request cancelled by user.",
@@ -176,10 +181,9 @@
       "Ribbon, typographic transformations, brick, doorway and sword geometry are implementation elements informed by accepted sources."
     ],
     "remainingPreparation": [
-      "Optimize images and normalize color profiles without overwriting source masters.",
-      "Prepare silent sky-video derivative with frequent keyframes and suitable framing for Veo mark; browser scrub QA remains.",
-      "Register hand-treatment layers, responsive crops and section-local animation lifecycle during implementation."
+      "User requested matching left and right glitch hand treatments after the original source gate. Left hand prompt is source-14-left-glitch-request.txt; these two assets alone remain pending."
     ],
-    "implementationStarted": false
-  }
+    "implementationStarted": true
+  },
+  "implementationStatus": "Local code and Vercel configuration ready; no deployment performed. Personal copy remains explicitly marked placeholders."
 }

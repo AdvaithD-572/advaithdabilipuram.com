@@ -25,9 +25,9 @@ export const products = [
 
 export const skills = [
   ['Languages', 'Python, Java, C, SQL, JavaScript, HTML and CSS'],
-  ['Application', 'React, Node.js, FastAPI, REST APIs, Flutter'],
-  ['Data and AI', 'PostgreSQL, Redis, data analytics, LLMs, prompt engineering'],
-  ['Delivery', 'Git, Docker, Google Cloud, testing, debugging'],
+  ['Application', 'React, Node.js, FastAPI, REST APIs, Flutter, Streamlit, Flask'],
+  ['Data and AI', 'PostgreSQL, Redis, Pandas, data analytics, Ollama, LLM APIs, prompt engineering, text processing'],
+  ['Delivery', 'Git, Docker, Docker Compose, Google Cloud, API integration, testing, debugging'],
 ];
 
 export const links = {
