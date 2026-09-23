@@ -1,4 +1,4 @@
-# Advaith Dabilipuram — Software Portfolio
+# Advaith Dabilipuram | Software Portfolio
 
 Static React portfolio for job applications and freelance discovery. It has no backend, database, analytics, authentication, or private API credentials.
 

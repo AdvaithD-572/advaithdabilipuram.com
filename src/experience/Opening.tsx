@@ -8,7 +8,7 @@ import { Sword3D, type SwordHandle } from './Sword3D';
 
 gsap.registerPlugin(ScrollTrigger);
 const chapters = [
-  ['Who I am', 'Still studying. Already building.', 'My degree is still loading. Meanwhile, I’m exploring full-stack development, UI/UX, applied AI, and AI engineering. I love building websites that solve real problems, help people grow, and connect them with others—with room for a little creative fun. Expect a collaborative process, a sense of humour, and serious care for the quality of the finished work.'],
+  ['Who I am', 'Still studying. Already building.', 'My degree is still loading. Meanwhile, I’m exploring full-stack development, UI/UX, applied AI, and AI engineering. I love building websites that solve real problems, help people grow, and connect them with others, with room for a little creative fun. Expect a collaborative process, a sense of humour, and serious care for the quality of the finished work.'],
   ['How I think', 'Understand first.', 'I start with a conversation. Whether you’re a startup or an individual, I want to understand what you do, what’s working, and what gets in the way. I listen to the problem or requirement, then work out a starting solution we can discuss together.'],
   ['What I build', 'Ideas into systems.', 'Full-stack applications, applied AI and mobile experiences. Explore the actual projects in the next world.'],
   ['How I build', 'Build. Refine. Deliver.', 'I put the first solution in front of you, hear your feedback, and clarify the details before development. Then I build, bring it back for feedback, and keep refining. You stay part of the process as we work towards a polished solution, ready to hand over.'],
