@@ -108,6 +108,7 @@ async function createEngine(canvas: HTMLCanvasElement, initialProgress: number, 
   const visibility = () => { if (document.hidden) { cancelAnimationFrame(frame); frame = 0; previous = 0; } else invalidate(); };
   document.addEventListener('visibilitychange', visibility);
   resize();
+  render();
   return {
     pose(progress, velocity) { target = swordPose(progress, velocity); impulseTarget = target.impulse; impulseUntil = performance.now() + 110; invalidate(); },
     active(value) {
@@ -131,31 +132,27 @@ export const Sword3D = forwardRef<SwordHandle>(function Sword3D(_, ref) {
   const element = useRef<HTMLDivElement>(null);
   const engine = useRef<Engine | null>(null);
   const pose = useRef({ progress: 0, velocity: 0, active: false });
-  const [failed, setFailed] = useState(false);
+  const [ready, setReady] = useState(false);
   useImperativeHandle(ref, () => ({
     setPose(progress, velocity) { pose.current = { ...pose.current, progress, velocity }; engine.current?.pose(progress, velocity); },
     setActive(active) { pose.current = { ...pose.current, active }; engine.current?.active(active); },
   }), []);
   useEffect(() => {
     if (!element.current || !canvas.current) return;
-    let cancelled = false, starting = false;
-    const observedCanvas = canvas.current;
-    const observer = new IntersectionObserver(entries => {
-      const visible = entries.some(entry => entry.isIntersecting);
-      if (visible && !starting) {
-        starting = true;
-        void createEngine(observedCanvas, pose.current.progress, () => cancelled).then(instance => {
-          if (cancelled) { instance.dispose(); return; }
-          engine.current = instance; instance.pose(pose.current.progress, pose.current.velocity); instance.active(pose.current.active);
-        }).catch(error => { if (!cancelled) { console.warn('Sword WebGL unavailable; showing the approved still.', error); setFailed(true); } });
-      }
-      engine.current?.active(visible && pose.current.active);
-    }, { rootMargin: '150px' });
-    observer.observe(element.current);
-    return () => { cancelled = true; observer.disconnect(); engine.current?.dispose(); engine.current = null; };
+    let cancelled = false;
+    void createEngine(canvas.current, pose.current.progress, () => cancelled).then(instance => {
+      if (cancelled) { instance.dispose(); return; }
+      engine.current = instance;
+      instance.pose(pose.current.progress, pose.current.velocity);
+      instance.active(pose.current.active);
+      setReady(true);
+    }).catch(error => {
+      if (!cancelled) console.warn('Sword WebGL unavailable; showing the approved still.', error);
+    });
+    return () => { cancelled = true; engine.current?.dispose(); engine.current = null; };
   }, []);
   return <div ref={element} className="sword-position" aria-hidden="true">
-    {failed ? <img src="/assets/worlds/sword-fallback.png" alt="" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 'auto', maxWidth: 'none', height: '100%' }} />
-      : <canvas ref={canvas} style={{ display: 'block', width: '100%', height: '100%' }} />}
+    {!ready && <img src="/assets/worlds/sword-fallback.png" alt="" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 'auto', maxWidth: 'none', height: '100%' }} />}
+    <canvas ref={canvas} style={{ display: 'block', width: '100%', height: '100%', visibility: ready ? 'visible' : 'hidden' }} />
   </div>;
 });

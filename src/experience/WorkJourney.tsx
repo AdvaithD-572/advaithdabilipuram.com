@@ -15,22 +15,27 @@ export function WorkJourney({ reducedMotion }: { reducedMotion: boolean }) {
     const track = section.querySelector<HTMLElement>('.project-track')!;
     const context = gsap.context(() => {
       let world = '';
+      let previousProgress = -1;
+      let travelWidth = track.offsetWidth - section.clientWidth;
       const render = (p: number) => {
         const nextWorld = p < .35 ? 'A way of thinking' : 'Projects';
         if (world !== nextWorld && section.getBoundingClientRect().top <= 0 && section.getBoundingClientRect().bottom > innerHeight) { world = nextWorld; dispatchEvent(new CustomEvent('experience:world', { detail: { label: world, light: p < .35 } })); }
-        const compression = smooth(range(p, .265, .345));
-        gsap.set(select('.type-environment'), { opacity: 1 - range(p, .3, .38), scale: 1.12 - range(p, 0, .2) * .12 });
-        select('.principle').forEach((element: HTMLElement, i: number) => {
-          const center = .028 + i * .077;
-          const alpha = i === 0 ? 1 - range(p, .052, .077) : Math.min(range(p, center - .025, center - .012), 1 - range(p, center + .022, center + .047));
-          gsap.set(element, { opacity: alpha, scaleX: 1 + range(p, center - .025, center + .047) * .12, rotationX: (i % 2 ? -1 : 1) * range(p, center, center + .05) * 24, y: -range(p, center, center + .05) * 25, letterSpacing: `${-.075 + range(p, center, center + .05) * .02}em` });
-        });
-        gsap.set(select('.type-architecture'), { scaleY: 1 - compression * .94, scaleX: 1 + compression * .2, yPercent: compression * 28, opacity: 1 - range(p, .325, .35) });
-        gsap.set(select('.type-copy'), { opacity: 1 - range(p, .25, .3) });
-        gsap.set(select('.single-brick'), { scaleX: .75 + compression * .25, scaleY: range(p, .285, .335) * (1 + range(p, .335, .38) * 13), opacity: range(p, .282, .3), rotationX: 18 * (1 - compression) });
+        if (p < .38 || previousProgress < .38) {
+          const compression = smooth(range(p, .265, .345));
+          gsap.set(select('.type-environment'), { opacity: 1 - range(p, .3, .38), scale: 1.12 - range(p, 0, .2) * .12 });
+          select('.principle').forEach((element: HTMLElement, i: number) => {
+            const center = .028 + i * .077;
+            const alpha = i === 0 ? 1 - range(p, .052, .077) : Math.min(range(p, center - .025, center - .012), 1 - range(p, center + .022, center + .047));
+            gsap.set(element, { opacity: alpha, scaleX: 1 + range(p, center - .025, center + .047) * .12, rotationX: (i % 2 ? -1 : 1) * range(p, center, center + .05) * 24, y: -range(p, center, center + .05) * 25, letterSpacing: `${-.075 + range(p, center, center + .05) * .02}em` });
+          });
+          gsap.set(select('.type-architecture'), { scaleY: 1 - compression * .94, scaleX: 1 + compression * .2, yPercent: compression * 28, opacity: 1 - range(p, .325, .35) });
+          gsap.set(select('.type-copy'), { opacity: 1 - range(p, .25, .3) });
+          gsap.set(select('.single-brick'), { scaleX: .75 + compression * .25, scaleY: range(p, .285, .335) * (1 + range(p, .335, .38) * 13), opacity: range(p, .282, .3), rotationX: 18 * (1 - compression) });
+        }
+        previousProgress = p;
         gsap.set(select('.project-heading'), { opacity: Math.min(range(p, .345, .4), 1 - range(p, .86, .9)) });
         const traversal = range(p, .4, .835);
-        gsap.set(track, { x: -(track.offsetWidth - section.clientWidth) * traversal, y: (1 - smooth(range(p, .335, .405))) * innerHeight, opacity: range(p, .33, .36) });
+        gsap.set(track, { x: -travelWidth * traversal, y: (1 - smooth(range(p, .335, .405))) * innerHeight, opacity: range(p, .33, .36) });
         select('.project-object').forEach((element: HTMLElement, i: number) => {
           const center = i / 3;
           const distance = Math.min(1, Math.abs(traversal - center));
@@ -43,7 +48,11 @@ export function WorkJourney({ reducedMotion }: { reducedMotion: boolean }) {
         gsap.set(select('.door-light'), { opacity: range(p, .925, .95) });
         gsap.set(select('.door-caption'), { opacity: Math.min(range(p, .895, .92), 1 - range(p, .95, .98)) });
       };
-      ScrollTrigger.create({ trigger: section, start: 'top top', end: 'bottom bottom', invalidateOnRefresh: true, onUpdate: self => render(self.progress), onRefresh: self => render(self.progress) });
+      ScrollTrigger.create({ trigger: section, start: 'top top', end: 'bottom bottom', invalidateOnRefresh: true, onUpdate: self => render(self.progress), onRefresh: self => {
+        travelWidth = track.offsetWidth - section.clientWidth;
+        previousProgress = -1;
+        render(self.progress);
+      } });
       render(0);
     }, section);
     return () => context.revert();
